@@ -2,6 +2,18 @@ MERKI
 =====
 ### The Medication Extraction and Reconciliation Knowledge Instrument
 
+Original paper: 
+[Extracting Structured Medication Event Information from Discharge
+Summaries](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC2655993/)
+Sigfried Gold, Noémie Elhadad, Xinxin Zhu, James J. Cimino, and George Hripcsak
+
+Demo site: [http://projects.dbmi.columbia.edu/merki/](http://projects.dbmi.columbia.edu/merki/)
+
+[Citations](http://scholar.google.com/scholar?cites=12861617034331125757&as_sdt=20000005&sciodt=0,21&hl=en)
+where you may find more effective parsers built more recently. If you
+learn of any that are also open source, let me know!
+
+[Distinguished paper award](http://www.amia.org/amia-awards/annual-conference-awards)
 
 ### MERKI Parser, Public Version, Documentation
 
