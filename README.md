@@ -2,19 +2,6 @@ MERKI
 =====
 ### The Medication Extraction and Reconciliation Knowledge Instrument
 
-Copyright 2007 Sigfried Gold
-This file is part of MERKI.  MERKI is free software: you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by the Free Software Foundation, 
-either version 3 of the License, or (at your option) any later version.
-
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
-without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
-See the GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License along with this program.  
-If not, see <http://www.gnu.org/licenses/>.
-
-Contact [Sigfried Gold](http://sigfried.org) with questions.
 
 ### MERKI Parser, Public Version, Documentation
 
@@ -53,45 +40,45 @@ to $parser->drugsToXML or $parser->drugsToHTMLTable in order to turn
 it into something more directly usable.  Here is an example (taken from
 bits of random clinical text, and not meant to be clinically plausible):
 
-unixshell$ echo "Discharge medications: Procardia XL 60 mg p.o. prn for severe wheezing, ferros sulfate 300 mg p.o. b.i.d., Cipro 250 mg p.o. q12hQ" | perl parseFromShell.pl
-<drugs>
-    <drug>
-        <drugName>Procardia XL</drugName>
-        <dose>60 mg</dose>
-        <route>p.o.</route>
-        <prn>prn for severe wheezing</prn>
-        <startChar>23</startChar>
-        <endChar>69</endChar>
-        <textLength>47</textLength>
-        <when>after discharge</when>
-        <context>Discharge meds</context>
-        <surroundingText>discharge medications: [Procardia XL 60 mg p.o. prn for severe wheezing], ferros sulfate 300 mg p.o. b</surroundingText>
-    </drug>
-    <possibleDrug>
-        <drugName>ferros sulfate </drugName>
-        <dose>300 mg</dose>
-        <route>p.o.</route>
-        <freq>b.i.d.</freq>
-        <startChar>72</startChar>
-        <endChar>104</endChar>
-        <textLength>33</textLength>
-        <when>after discharge</when>
-        <context>Discharge meds</context>
-        <surroundingText>p.o. prn for severe wheezing, [ferros sulfate 300 mg p.o. b.i.d.], D1DDD 250 mg p.o. q12hq</surroundingText>
-    </possibleDrug>
-    <drug>
-        <drugName>Cipro</drugName>
-        <dose>250 mg</dose>
-        <route>p.o.</route>
-        <freq>q12</freq>
-        <startChar>107</startChar>
-        <endChar>127</endChar>
-        <textLength>21</textLength>
-        <when>after discharge</when>
-        <context>Discharge meds</context>
-        <surroundingText>s sulfate 300 mg p.o. b.i.d., [Cipro 250 mg p.o. q12]hq</surroundingText>
-    </drug>
-</drugs>
+    unixshell$ echo "Discharge medications: Procardia XL 60 mg p.o. prn for severe wheezing, ferros sulfate 300 mg p.o. b.i.d., Cipro 250 mg p.o. q12hQ" | perl parseFromShell.pl
+    <drugs>
+        <drug>
+            <drugName>Procardia XL</drugName>
+            <dose>60 mg</dose>
+            <route>p.o.</route>
+            <prn>prn for severe wheezing</prn>
+            <startChar>23</startChar>
+            <endChar>69</endChar>
+            <textLength>47</textLength>
+            <when>after discharge</when>
+            <context>Discharge meds</context>
+            <surroundingText>discharge medications: [Procardia XL 60 mg p.o. prn for severe wheezing], ferros sulfate 300 mg p.o. b</surroundingText>
+        </drug>
+        <possibleDrug>
+            <drugName>ferros sulfate </drugName>
+            <dose>300 mg</dose>
+            <route>p.o.</route>
+            <freq>b.i.d.</freq>
+            <startChar>72</startChar>
+            <endChar>104</endChar>
+            <textLength>33</textLength>
+            <when>after discharge</when>
+            <context>Discharge meds</context>
+            <surroundingText>p.o. prn for severe wheezing, [ferros sulfate 300 mg p.o. b.i.d.], D1DDD 250 mg p.o. q12hq</surroundingText>
+        </possibleDrug>
+        <drug>
+            <drugName>Cipro</drugName>
+            <dose>250 mg</dose>
+            <route>p.o.</route>
+            <freq>q12</freq>
+            <startChar>107</startChar>
+            <endChar>127</endChar>
+            <textLength>21</textLength>
+            <when>after discharge</when>
+            <context>Discharge meds</context>
+            <surroundingText>s sulfate 300 mg p.o. b.i.d., [Cipro 250 mg p.o. q12]hq</surroundingText>
+        </drug>
+    </drugs>
 
 To understand how the parser decides what counts as a drug, a possible
 drug, a context, a dose, route, etc., look at these tokens in
@@ -168,5 +155,4 @@ If you do make changes, or even if you use the code at all, I would very
 much appreciate hearing from you.  I may be able to offer assistance,
 and I may be able to make your improvements available to others.
 
-Sigfried Gold
-sigfried@sigfried.org
+Contact [Sigfried Gold](http://sigfried.org) with questions.
