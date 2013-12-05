@@ -1,0 +1,175 @@
+---
+trumps: [{ trumper: drug, trumpee: possibleDrug },
+         { trumper: date, trumpee: number }
+        ]    # if there's overlap, get rid of trumpee
+nonTerminals:       
+    # any string of alpha characters here will get replaced with terminal patterns (except things like \s)
+    # for nonTerminals make don't worry about closing parens, they will be added
+    # other than that, these are normal regular expressions (there will be extra parens around some stuff)
+    - name: date
+      patterns:
+        - '(validDate|possibleDate)'
+    - name: dateRange
+      patterns:
+        - '(openParen)(date)((dash)(date)?)?closeParen'
+        - '(date)((dash)(date)?)?'
+    - name: numberRange
+      patterns:
+        - number ?- ?number
+        - writtenNumber to writtenNumber
+        - writtenNumber ?- ?writtenNumber
+    - name: howLong
+      patterns:
+        - '(x|for)\s*(number|writtenNumber|numberRange)\s*period'
+    - name: simpleFreq
+      patterns:
+        - 'every\s*period'                            # q. day
+        - 'every\s*(number(-number)?)?\s*(period)?'   # e.g., every day, every 3 days, every 2-4 days
+        - 'howManyTimes\s+periodAdj'                  # e.g., twice daily
+        - 'howManyTimes\s+per\s+period'               # e.g., twice each day
+        - howOften                                    # e.g., bid
+        - periodAdj                                   # e.g., daily
+        - howLong                                     # e.g., for five days
+        - otherFreq                                   # ad lib
+    - name: freq
+      patterns:
+        - eachTimeOfDay
+        - 'simpleFreq(\s+timeOfDay)?(\s+howLong)?'
+        - '(timeOfDay|howOften)(howLong)?'
+        - howLong
+        #- 'simpleFreq(\s+timeOfDay)?(\s+qualifier)?(\s+howLong)?'
+        #- '(qualifier\s+)?simpleFreq(\s+timeOfDay)?(\s+howLong)?'
+        #- '(timeOfDay|howOften)(qualifier)?(howLong)?'
+    - name: route
+      patterns:
+        - '(manner\b\s*(where)?)|where'
+#    - name: test
+#      patterns:
+#        - asNeeded
+#        - route
+    - name: prn
+      patterns:
+        - 'asNeeded\s*qualifier'
+        - '(cond|asNeeded)'
+        #- '(cond|asNeeded)(\s*qualifier)?'
+    - name: instruct
+      patterns:
+        - '((route|freq|prn)\b\s*)+'
+        #- 'route\b\s*freq\b\s*prn'
+        #- 'route\b\s*freq(\b\s*prn)?'
+        #- 'route(\b\s*freq)?(\b\s*prn)?'
+        #- 'freq(\b\s*route)?(\b\s*prn)?'
+        #- '(freq\b\s*)?(route?\b\s*)prn'
+    - name: instructions
+      patterns:
+        - 'instruct(\s*dateRange)?'
+        - dateRange
+    - name: dose
+      patterns:
+        - '(number|writtenNumber)\s*unitOfMeasure?\b\s*(uncountableForm|countableForm)?'
+        - 'unitOfMeasure\s+uncountableForm'
+        - unitOfMeasure
+        - countableForm
+        - uncountableForm
+        - number
+    - name: doseOf
+      patterns:
+        - 'dose( of)?'
+    - name: drugInfo
+      patterns:
+        - 'dose(\b\s*instructions)?'
+        - '(dose\b\s*)?instructions'
+    - name: drug
+      patterns:
+        - 'drugname(\b\s*drugInfo)?'
+        - 'doseOf\b\s*?drugname(\b\s*instructions)?'
+        #- 'drugname(\s+dose)?(\s+freq)?(\s+route)?(\s*dateRange)?'
+        #- 'drugname(\s+dose)?(\s+freq)?(\s+route)?(\s*dateRange)?'
+        #- '(dose\s+)?(route\s+)?drugname(\s+freq)?(\s*dateRange)?'
+        #- '(dose\s+)?(route\s+)?drugname(\s*dateRange)?(\s+freq)?'
+    - name: possibleDrug
+      patterns:
+#        - 'possibleDrugName(\b\s*drugInfo)'        too permissive
+        - 'possibleDrugName\b\s*dose\b\s*instructions'
+        - 'possibleDrugName\b\s*prn'
+        - 'treatedWith\s*possibleDrugName'
+        #- 'possibleDrugName(\s+dose|route|freq)+(\s*dateRange)?'
+        #- '(dose\s+)possibleDrugName(\s+route|freq)(\s*dateRange)?'
+        #- '(route\s+)possibleDrugName(\s+dose|freq)(\s*dateRange)?'
+    - name: context
+      patterns:
+        - contextClue
+terminals:
+    # for terminals make sure to use closing parens where it might be 
+    # dangerous to connect a pattern to another with |
+    drugname:           ['D\d+D+']
+    unitOfMeasure:      [g, gm, mg, ml, mcg, cc, megagram, microgram, milligram, meq]  
+                         # PROBLEM: these can be preceded by number without word boundary (solved yet?)
+    countableForm:      [tab, tablet, gtt, drop, puff, cap, amp, can]
+    uncountableForm:    [oint, ointment, ung, sol, solution, susp, suspension]
+    #uncountableForm:    [oint, ointment, ung, sol, solution, susp, suspension, inh, inhaler, neb, nebulizer]
+    of:                 [of]        # literal for dose of
+    to:                 [to]        # literal
+    x:                  [x]        # literal
+    for:                 [for]        # literal
+
+    manner:             [po, iv, drip, sl, npo, pgt, png, pnj, pr, top, trans, sc, sq, subcutaneous, subq, subcut, 
+                         im, intramuscular, inh, inhaler, neb, nebulizer, patch, td, transdermal]
+    #manner:             [po, iv, drip, sl, npo, pgt, png, pnj, pr, top, trans, sc, sq, subcutaneous, subq, subcut, im, intramuscular]
+    where:              [ad, right ear, as, left ear, au, both ears, od, right eye, or, os, left eye, ou, both eyes]
+
+    eachTimeOfDay:      [qam, q am, qpm, q pm, qhs]
+    timeOfDay:          [hs, at bedtime, stat, ac, before meals, ap, before dinner, pc, after meals, am, morning, pm, evening, afternoon]
+    period:             [hour, hr, h, day, d, week, wk, w, month, mo, year, yr]
+    periodAdj:          [hourly, daily, weekly, monthly, yearly]
+
+    cond:               [ud, ut dict, prm-breakthrough, '(were|was) held', discontinued, "dc'd"]
+    asNeeded:           [prn, as needed]
+    #qualifier:          ['(for)?\s*(severe)?\s*pain']
+    qualifier:          ['(for)?\s*(severe)?\s*(pain|wheez\w*|agita[\w/]+)']
+
+    howManyTimes:       [once, twice, thrice, three times, four times]
+    per:                [per, a, each, every]
+    every:              [q, every, each]
+    howOften:           [qd, bid, tid, qid, qod, daily] #, '(q\.\d+\.h\.)', '(q\s?\d+)' ]
+    otherFreq:          ['ad lib\.?']
+    #howLong:            ['(x|for)\s*\d+(\s*-\s*\d+)?(\s*plus)?\s*(h|hr|hour|d|day|week|wk)s?']
+    number:             ['((?<!D)\d+(\.\d+)?(?!\d*D))']
+                          #  the first part of the number match says don't take numbers that start and end with Ds
+                          #    that's because I'm using strings like D123DDDD for temporary drug identifiers
+    writtenNumber:      [one, two, three, four, five, six, seven, eight, nine, ten, eleven, twelve]
+    validDate:          ['(?<!\d)((((0?[13578]|1[02])\/(0?[1-9]|[12][0-9]|3[01]))|((0?[469]|11)\/(0?[1-9]|[12][0-9]|30))|0?2\/(0?[1-9]|[12][0-9]))(\/((19|20)?\d\d))?)(?!\d)']
+    #validDate:          ['(?<!\d)(((0?[13578]|1[02])\/(0?[1-9]|[12][0-9]|3[01]))|((0?[469]|11)\/(0?[1-9]|[12][0-9]|30))|0?2\/(0?[1-9]|[12][0-9]))(?!\d)']
+    possibleDate:       ['\d\d?\/\d\d?(\/(\d\d)?\d\d)?']
+    #possibleDate:       ['\d\d?\/\d\d?']
+    #possibleDateRange:  ['\(?\d\d?\/\d\d? ?-( ?\d\d?\/\d\d?)?\)?']
+    forSomething:       ['for [a-z]+.*?((?=[.;])|$)']
+    openParen:          ['\(']
+    closeParen:         ['\)']
+    dash:               ['-']
+    possibleDrugName:   ['\b[\w\- \/\.]{4,25}\b']   # anything between 4 and 15 chars long with word bounds at both ends
+    treatedWith:        ['treated with', 'on a regimen of', 'meds:', 'medications:']
+    contextClue:        ['(discharge|(at )?home|admi\w+|or|(out|in) ?(pt|patient))\s+(med|medication)s?', meds held, 'medication on admission', 
+                         'medications on admission', medication, med, allergic to, allergy, allergies, 
+                         '(hosp(ital)?|or|.?icu) (course|med(ication)?s?)',
+                         'lab(oratory)?( (results|data|review))?', labs, history, pmhx?, hpi, cc, 'chief complaint', 'on a regimen of', 
+                         'titrated? off', 'on hold', standing, '(re)?started on', 'in (the )?(e(d|r)|emergency)']
+    drugClasse:         ['anti-?\w+', nsaids?, mvis?, multi-?vitamins?, Analgesics?, anesthetics?, narcotics?, salicylates?, muscle relaxants?,
+                         beta-lactams?, tetracyclines?, statins?, diuretics?, corticosteroids?, laxatives?, cathartics?, stool softeners?,
+                         contraceptives?, vitamins?, coagulants?, mood stabilizers?, ssris?, ndris?, saris? ]
+
+wordBoundaryOptional:   [ [number,unitOfMeasure], [number, period] ] # not implemeted yet
+convenienceRules:
+    dotsAfterLtrOk:     [qd, bid, tid, qid, qod, qam, qpm, prn, ac, ad, as, au, hs, qhs, od, os, ou, pc, po, qs, ap, ud]
+    dotsAtEndOk:        [q, g, gm, mg, ml, mcg, cc, tab, cap, oint, ung, sol, susp, inh, amp, qv, h, 
+                         hr, d, w, wk, mo, yr, amp, neb, ut dict]
+    canBePlural:        [gm, mg, ml, mcg, cc, tab, cap, tablet, gtt, drop, puff, neb, amp, inhaler, 
+                         hr, hour, day, wk, week, mo, month, yr, year, med, medication,
+                         milligram, microgram, megagram ]
+    plurDotAtEnd:       [gm, mg, ml, mcg, cc]
+drugnameStoplist:      [ cholesterol, iron, air, sodium, potassium, calcium, magnesium, glucose, phosphorus ]         # some versions of the druglist have needed a longer stop list
+nonTerminalsToParse:    # this is sort of like a start rule, nothing else will go to output
+#                       $parser->twoLevelParse ignores this rule
+    - drug
+    - possibleDrug
+    - context
