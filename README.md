@@ -1,5 +1,6 @@
-MERKI: The Medication Extraction and Reconciliation Knowledge Instrument
+MERKI 
 =====
+### The Medication Extraction and Reconciliation Knowledge Instrument
 
 Copyright 2007 Sigfried Gold
 This file is part of MERKI.  MERKI is free software: you can redistribute it and/or modify it 
@@ -15,7 +16,7 @@ If not, see <http://www.gnu.org/licenses/>.
 
 Contact [Sigfried Gold](http://sigfried.org) with questions.
 
-## MERKI Parser, Public Version, Documentation
+### MERKI Parser, Public Version, Documentation
 
 Files:
     ParseMeds.pm            parser code module
