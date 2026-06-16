@@ -1,0 +1,38 @@
+<drugs>
+    <drug>
+        <drugName>Procardia XL</drugName>
+        <dose>60 mg</dose>
+        <route>p.o.</route>
+        <freq>q.d</freq>
+        <startChar>0</startChar>
+        <endChar>26</endChar>
+        <textLength>27</textLength>
+        <when>unknown</when>
+        <context></context>
+        <surroundingText>[Procardia XL 60 mg p.o. q.d]., D1DDDDDDDDDDDDD 300 mg p.o.</surroundingText>
+    </drug>
+    <drug>
+        <drugName>ferrous sulfate</drugName>
+        <dose>300 mg</dose>
+        <route>p.o.</route>
+        <freq>b.i.d.</freq>
+        <startChar>30</startChar>
+        <endChar>63</endChar>
+        <textLength>34</textLength>
+        <when>unknown</when>
+        <context></context>
+        <surroundingText>D0DDDDDDDDDD 60 mg p.o. q.d., [ferrous sulfate 300 mg p.o. b.i.d.], D2DDD 250 mg p.o. q12h</surroundingText>
+    </drug>
+    <drug>
+        <drugName>Cipro</drugName>
+        <dose>250 mg</dose>
+        <route>p.o.</route>
+        <freq>q12h</freq>
+        <startChar>66</startChar>
+        <endChar>87</endChar>
+        <textLength>22</textLength>
+        <when>unknown</when>
+        <context></context>
+        <surroundingText>DDDDDDDDD 300 mg p.o. b.i.d., [Cipro 250 mg p.o. q12h]</surroundingText>
+    </drug>
+</drugs>

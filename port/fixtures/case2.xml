@@ -1,0 +1,55 @@
+<drugs>
+    <drug>
+        <drugName>Lasix</drugName>
+        <dose>80 mg</dose>
+        <route>p.o.</route>
+        <freq>twice a day</freq>
+        <startChar>0</startChar>
+        <endChar>27</endChar>
+        <textLength>28</textLength>
+        <when>unknown</when>
+        <context></context>
+        <surroundingText>[Lasix 80 mg p.o. twice a day], D1DDDD 25 a day, D2DDDDDDDD </surroundingText>
+    </drug>
+    <drug>
+        <drugName>Inspra</drugName>
+        <dose>25</dose>
+        <startChar>30</startChar>
+        <endChar>38</endChar>
+        <textLength>9</textLength>
+        <when>unknown</when>
+        <context></context>
+        <surroundingText>D0DDD 80 mg p.o. twice a day, [Inspra 25] a day, D2DDDDDDDD 200 a day, </surroundingText>
+    </drug>
+    <drug>
+        <drugName>Amiodarone</drugName>
+        <dose>200</dose>
+        <startChar>47</startChar>
+        <endChar>60</endChar>
+        <textLength>14</textLength>
+        <when>unknown</when>
+        <context></context>
+        <surroundingText>twice a day, D1DDDD 25 a day, [Amiodarone 200] a day, D3DDDDD 0.25 a day, D4</surroundingText>
+    </drug>
+    <drug>
+        <drugName>Digoxin</drugName>
+        <dose>0.25</dose>
+        <startChar>69</startChar>
+        <endChar>80</endChar>
+        <textLength>12</textLength>
+        <when>unknown</when>
+        <context></context>
+        <surroundingText> a day, D2DDDDDDDD 200 a day, [Digoxin 0.25] a day, D4DDD 6.25 twice a day</surroundingText>
+    </drug>
+    <drug>
+        <drugName>Coreg</drugName>
+        <dose>6.25</dose>
+        <freq>twice a day</freq>
+        <startChar>89</startChar>
+        <endChar>110</endChar>
+        <textLength>22</textLength>
+        <when>unknown</when>
+        <context></context>
+        <surroundingText>00 a day, D3DDDDD 0.25 a day, [Coreg 6.25 twice a day]</surroundingText>
+    </drug>
+</drugs>

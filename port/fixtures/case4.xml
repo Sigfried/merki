@@ -1,0 +1,38 @@
+<drugs>
+    <drug>
+        <drugName>tylenol</drugName>
+        <startChar>11</startChar>
+        <endChar>17</endChar>
+        <textLength>7</textLength>
+        <when>unknown</when>
+        <context>Allergies</context>
+        <surroundingText>allergies: [tylenol], D1DDDDDDDDDD, D2DDDDD, peanu</surroundingText>
+    </drug>
+    <drug>
+        <drugName>azithromycin</drugName>
+        <startChar>20</startChar>
+        <endChar>31</endChar>
+        <textLength>12</textLength>
+        <when>unknown</when>
+        <context>Allergies</context>
+        <surroundingText>allergies: D0DDDDD, [azithromycin], D2DDDDD, peanut butter, D3DD</surroundingText>
+    </drug>
+    <drug>
+        <drugName>aspirin</drugName>
+        <startChar>34</startChar>
+        <endChar>40</endChar>
+        <textLength>7</textLength>
+        <when>unknown</when>
+        <context>Allergies</context>
+        <surroundingText>rgies: D0DDDDD, D1DDDDDDDDDD, [aspirin], peanut butter, D3DDDD</surroundingText>
+    </drug>
+    <drug>
+        <drugName>viagra</drugName>
+        <startChar>58</startChar>
+        <endChar>63</endChar>
+        <textLength>6</textLength>
+        <when>unknown</when>
+        <context>Allergies</context>
+        <surroundingText>DDDD, D2DDDDD, peanut butter, [viagra]</surroundingText>
+    </drug>
+</drugs>

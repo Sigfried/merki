@@ -1,0 +1,25 @@
+<drugs>
+    <drug>
+        <drugName>Tylenol</drugName>
+        <dose>650 mg</dose>
+        <route>p.o.</route>
+        <freq>q4h</freq>
+        <prn>p.r.n.</prn>
+        <startChar>0</startChar>
+        <endChar>29</endChar>
+        <textLength>30</textLength>
+        <when>unknown</when>
+        <context></context>
+        <surroundingText>[Tylenol 650 mg p.o. q4h p.r.n.], D1DDDDDD one to two tablets </surroundingText>
+    </drug>
+    <drug>
+        <drugName>Percocet</drugName>
+        <dose>one</dose>
+        <startChar>32</startChar>
+        <endChar>43</endChar>
+        <textLength>12</textLength>
+        <when>unknown</when>
+        <context></context>
+        <surroundingText>DDDDD 650 mg p.o. q4h p.r.n., [Percocet one] to two tablets p.o. q4-6h p.r</surroundingText>
+    </drug>
+</drugs>
