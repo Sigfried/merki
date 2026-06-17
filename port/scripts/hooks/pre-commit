@@ -1,0 +1,30 @@
+#!/bin/sh
+# MERKI pre-commit hook (installed via core.hooksPath by
+# port/scripts/install-hooks.mjs, run from `npm install`'s prepare step).
+#
+# 1. If drugParseRules.yaml is staged, regenerate port/src/rules.generated.json
+#    and re-stage it, so the generated rules can never drift from the YAML.
+# 2. If the grammar (YAML) or the port source/tests are part of this commit,
+#    run typecheck + the fidelity tests and block the commit on failure — so a
+#    grammar or code edit can't silently break the parser.
+#
+# Runs from the git top level.  Commits that touch neither the grammar nor the
+# port skip straight through (no test cost).
+
+set -e
+
+staged=$(git diff --cached --name-only)
+
+echo "$staged" | grep -q '^drugParseRules\.yaml$' && yaml_changed=1 || yaml_changed=0
+echo "$staged" | grep -qE '^port/(src|test)/' && port_changed=1 || port_changed=0
+
+if [ "$yaml_changed" = 1 ]; then
+  echo "pre-commit: drugParseRules.yaml changed — regenerating rules.generated.json"
+  node port/scripts/gen-rules.mjs
+  git add port/src/rules.generated.json
+fi
+
+if [ "$yaml_changed" = 1 ] || [ "$port_changed" = 1 ]; then
+  echo "pre-commit: grammar or port changed — typecheck + fidelity tests"
+  ( cd port && npm run --silent typecheck && npm test --silent )
+fi

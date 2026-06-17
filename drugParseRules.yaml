@@ -123,7 +123,7 @@ terminals:
     period:             [hour, hr, h, day, d, week, wk, w, month, mo, year, yr]
     periodAdj:          [hourly, daily, weekly, monthly, yearly]
 
-    cond:               [ud, ut dict, prm-breakthrough, '(were|was) held', discontinued, "dc'd"]
+    cond:               [ud, ut dict, prn-breakthrough, '(were|was) held', discontinued, "dc'd"]
     asNeeded:           [prn, as needed]
     #qualifier:          ['(for)?\s*(severe)?\s*pain']
     qualifier:          ['(for)?\s*(severe)?\s*(pain|wheez\w*|agita[\w/]+)']
@@ -147,7 +147,7 @@ terminals:
     openParen:          ['\(']
     closeParen:         ['\)']
     dash:               ['-']
-    possibleDrugName:   ['\b[\w\- \/\.]{4,25}\b']   # anything between 4 and 15 chars long with word bounds at both ends
+    possibleDrugName:   ['\b[\w\- \/\.]{4,25}\b']   # anything between 4 and 25 chars long with word bounds at both ends
     treatedWith:        ['treated with', 'on a regimen of', 'meds:', 'medications:']
     contextClue:        ['(discharge|(at )?home|admi\w+|or|(out|in) ?(pt|patient))\s+(med|medication)s?', meds held, 'medication on admission', 
                          'medications on admission', medication, med, allergic to, allergy, allergies, 

@@ -8,6 +8,10 @@ Summaries](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC2655993/)
 Sigfried Gold, Noémie Elhadad, Xinxin Zhu, James J. Cimino, and George Hripcsak
 
 Demo site: [http://projects.dbmi.columbia.edu/merki/](http://projects.dbmi.columbia.edu/merki/)
+(the original Columbia Perl-CGI demo is long gone). A browser-runnable
+TypeScript port of the parser now lives in [`port/`](port/) — see
+[`port/README.md`](port/README.md) — so the parser can run as a static page
+with no server.
 
 [Citations](http://scholar.google.com/scholar?cites=12861617034331125757&as_sdt=20000005&sciodt=0,21&hl=en)
 where you may find more effective parsers built more recently. If you
@@ -27,7 +31,7 @@ Files:
                                 echo "...tylenol 250mg po daily..." | perl parseFromShell.pl
 
 MERKI was a sprawling, ambitious application I worked on during my time
-as a student of Biomedical Informatics at Columbia University.  It's
+as a student of Biomedical Informatics at Columbia University.  Its
 purpose was to extract medication information from structured and
 free-text patient data, standardize and condense it, and produce a
 complete and concise listing of all medications mentioned in each
@@ -46,13 +50,13 @@ parser:
 
 $parser->twoLevelParser goes over its input twice: once to extract
 drugs, possible drugs, and contexts; and a second time to find, within
-each drug or possible drug, the dose, route, frequence, prn and dates.
+each drug or possible drug, the dose, route, frequency, prn and dates.
 twoLevelParser returns a Perl data structure which can then be passed
 to $parser->drugsToXML or $parser->drugsToHTMLTable in order to turn
 it into something more directly usable.  Here is an example (taken from
 bits of random clinical text, and not meant to be clinically plausible):
 
-    unixshell$ echo "Discharge medications: Procardia XL 60 mg p.o. prn for severe wheezing, ferros sulfate 300 mg p.o. b.i.d., Cipro 250 mg p.o. q12hQ" | perl parseFromShell.pl
+    unixshell$ echo "Discharge medications: Procardia XL 60 mg p.o. prn for severe wheezing, ferros sulfate 300 mg p.o. b.i.d., Cipro 250 mg p.o. q12h" | perl parseFromShell.pl
     <drugs>
         <drug>
             <drugName>Procardia XL</drugName>
@@ -76,19 +80,19 @@ bits of random clinical text, and not meant to be clinically plausible):
             <textLength>33</textLength>
             <when>after discharge</when>
             <context>Discharge meds</context>
-            <surroundingText>p.o. prn for severe wheezing, [ferros sulfate 300 mg p.o. b.i.d.], D1DDD 250 mg p.o. q12hq</surroundingText>
+            <surroundingText>p.o. prn for severe wheezing, [ferros sulfate 300 mg p.o. b.i.d.], D1DDD 250 mg p.o. q12h</surroundingText>
         </possibleDrug>
         <drug>
             <drugName>Cipro</drugName>
             <dose>250 mg</dose>
             <route>p.o.</route>
-            <freq>q12</freq>
+            <freq>q12h</freq>
             <startChar>107</startChar>
-            <endChar>127</endChar>
-            <textLength>21</textLength>
+            <endChar>128</endChar>
+            <textLength>22</textLength>
             <when>after discharge</when>
             <context>Discharge meds</context>
-            <surroundingText>s sulfate 300 mg p.o. b.i.d., [Cipro 250 mg p.o. q12]hq</surroundingText>
+            <surroundingText>s sulfate 300 mg p.o. b.i.d., [Cipro 250 mg p.o. q12h]</surroundingText>
         </drug>
     </drugs>
 
@@ -134,7 +138,7 @@ another token.)
 Terminals are made up of a name followed by a list of expressions or
 pieces of literal text.  Take, for instance, the terminal cond:
 
-    cond:   [ud, ut dict, prm-breakthrough, '(were|was) held', discontinued, "dc'd"]
+    cond:   [ud, ut dict, prn-breakthrough, '(were|was) held', discontinued, "dc'd"]
 
 This will be converted into the (approximately) following regular expression:
 

@@ -1,0 +1,33 @@
+{
+  "name": "merki-parser",
+  "version": "0.1.0",
+  "description": "Browser-runnable TypeScript port of the MERKI medication parser (Perl ParseMeds.pm)",
+  "license": "GPL-3.0-or-later",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "generate": "node scripts/gen-rules.mjs",
+    "prepare": "node scripts/install-hooks.mjs"
+  },
+  "devDependencies": {
+    "@types/node": "^25.9.3",
+    "typescript": "^5.5.0",
+    "vitest": "^2.0.0",
+    "yaml": "^2.9.0"
+  }
+}

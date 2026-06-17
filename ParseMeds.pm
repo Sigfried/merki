@@ -211,7 +211,7 @@ sub makeTerminalPatterns {
 }
 sub makeNonTerminalPatterns {
     my $self = shift;
-    $self->{DEBUG} = 1;
+    $self->{DEBUG} = 1;     # NOTE: hard-set, so the "DEBUG" validation block below always runs
     my $nonTerminals = $self->{nonTerminals};
     my @processingOrder;
     my %reverseNonTerminalHash;
@@ -221,9 +221,11 @@ sub makeNonTerminalPatterns {
         my $patterns = $nt->{patterns};
         my @expandedPatterns;
         for my $pattern (@$patterns) {
-			# any alpha chars we find in a pattern should be part of the name of another pattern, EXCEPT
-			#	chars following \ ! or =, which are parts of regexes.  get rid of these temporarily
-			#	and for every other alpha string, replace it with the pattern it refers to
+			      # any alpha chars we find in a pattern should be part of the name of another pattern, EXCEPT
+			      #	chars following \ ! or =, which are parts of regexes.  get rid of these temporarily
+			      #	and for every other alpha string, replace it with the pattern it refers to
+            # NOTE: the comment above says "chars" (plural) but we stash only ONE char after
+            #   \ ! or =.  harmless here -- \b is the only escape in this grammar, and it's one letter.
             my @escs; while( $pattern =~ s/((\\|!|=)[a-zA-Z])/====/ ) { push @escs, $1 }
             #print "$pattern\n" if @escs;
             if( $self->{DEBUG} ) {
@@ -234,7 +236,15 @@ sub makeNonTerminalPatterns {
             # hold on to escape sequences (\s, \d) so they don't get matched
             $pattern =~ s/([a-zA-Z]+)/((?=\\s*)$self->{patterns}{$1}(?=\\s*))/g;
             if( @escs ) {
-				$escs[0] = $self->{splitDelim} if $escs[0] eq '\b';		# \b just doesn't work right for this app
+                # WART (load-bearing): only escs[0] gets the \b -> splitDelim swap, and only once,
+                #   here OUTSIDE the loop -- so only the FIRST escape is ever swapped; every later \b
+                #   is restored literally below.  Looks like a bug (the swap belongs inside the loop),
+                #   but it parses BETTER than the "fix": splitDelim is much looser than a bare \b, so
+                #   swapping every \b lets junk like "started on 03/15/2024" satisfy possibleDrug's
+                #   `possibleDrugName \b dose \b instructions` alternative.  Keeping later \b's literal
+                #   keeps possibleDrug strict.  Do NOT move this inside the loop without regenerating
+                #   all fixtures.  (The TS port in port/src/patterns.ts replicates this exactly.)
+                $escs[0] = $self->{splitDelim} if $escs[0] eq '\b';		# \b just doesn't work right for this app
                 while( $pattern =~ s/====/$escs[0]/ ) { shift @escs }
                 #print "$pattern\n\n\n";
             }
