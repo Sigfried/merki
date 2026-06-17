@@ -12,6 +12,9 @@ string (fetch it as a static asset) and call the parser.
 
 GPL-3.0-or-later, like the rest of MERKI. See the repo `LICENSE`.
 
+**Live demo:** [https://sigfried.github.io/merki/](https://sigfried.github.io/merki/)
+(source in [`../docs/index.html`](../docs/index.html)).
+
 ## Usage
 
 ```ts
@@ -98,6 +101,27 @@ part of `npm test`; the committed `fixtures/` are the portable regression test.
 cd test/corpus
 node generate.mjs > cases.txt
 npx tsx run.mjs cases.txt     # parses each line through both Perl and TS, diffs
+```
+
+## The demo
+
+The static demo lives at [`../docs/`](../docs/). Its only source file is
+`docs/index.html`; the parser it loads (`docs/lib/`) and the lexicon
+(`docs/druglist.tsv`) are **built**, not committed:
+
+```sh
+npm run build:demo     # tsc build, then assemble docs/lib + docs/druglist.tsv
+```
+
+On push to `master`, a GitHub Action (`.github/workflows/pages.yml`) runs the
+same build and deploys `docs/` to GitHub Pages, so the live demo can never lag
+the library. Pages must be set to deploy from **GitHub Actions** (Settings →
+Pages → Source). To preview locally, serve over http (ES modules + `fetch`
+don't work from `file://`):
+
+```sh
+npm run build:demo && (cd ../docs && python3 -m http.server)
+# then open http://localhost:8000/
 ```
 
 ## Regenerating / extending fixtures

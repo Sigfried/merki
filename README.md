@@ -7,11 +7,15 @@ Original paper:
 Summaries](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC2655993/)
 Sigfried Gold, Noémie Elhadad, Xinxin Zhu, James J. Cimino, and George Hripcsak
 
-Demo site: [http://projects.dbmi.columbia.edu/merki/](http://projects.dbmi.columbia.edu/merki/)
-(the original Columbia Perl-CGI demo is long gone). A browser-runnable
-TypeScript port of the parser now lives in [`port/`](port/) — see
-[`port/README.md`](port/README.md) — so the parser can run as a static page
-with no server.
+**Live demo: [https://sigfried.github.io/merki/](https://sigfried.github.io/merki/)**
+— paste clinical text and see the extracted medications, running entirely in
+your browser.
+
+The original Columbia Perl-CGI demo
+([projects.dbmi.columbia.edu/merki](http://projects.dbmi.columbia.edu/merki/))
+is long gone. A browser-runnable TypeScript port of the parser now lives in
+[`port/`](port/) — see [`port/README.md`](port/README.md) — and powers the live
+demo above as a static page with no server.
 
 [Citations](http://scholar.google.com/scholar?cites=12861617034331125757&as_sdt=20000005&sciodt=0,21&hl=en)
 where you may find more effective parsers built more recently. If you

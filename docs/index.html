@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>MERKI — medication parser demo</title>
+<style>
+  :root { --fg:#1a1a1a; --muted:#666; --accent:#2257a8; --line:#ddd; --bg:#fafafa; --code:#f3f3f3; }
+  * { box-sizing: border-box; }
+  body {
+    font: 16px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: var(--fg); margin: 0; background: #fff;
+  }
+  .wrap { max-width: 60rem; margin: 0 auto; padding: 1.5rem 1.25rem 4rem; }
+  h1 { margin: 0 0 .25rem; font-size: 1.6rem; }
+  .sub { color: var(--muted); margin: 0 0 1.5rem; }
+  label { display:block; font-weight:600; margin: 0 0 .35rem; }
+  textarea {
+    width: 100%; min-height: 7.5rem; padding: .75rem; font: 14px/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    border: 1px solid var(--line); border-radius: 6px; resize: vertical;
+  }
+  .controls { display:flex; gap:.6rem; flex-wrap:wrap; align-items:center; margin:.75rem 0 0; }
+  button {
+    font: inherit; padding: .5rem .9rem; border-radius: 6px; border: 1px solid var(--line);
+    background:#fff; cursor:pointer;
+  }
+  button.primary { background: var(--accent); border-color: var(--accent); color:#fff; font-weight:600; }
+  button:disabled { opacity:.5; cursor: default; }
+  .status { color: var(--muted); font-size: .9rem; }
+  .status.error { color: #b00020; }
+  section { margin-top: 2rem; }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; }
+  th, td { text-align: left; padding: .4rem .6rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { background: var(--bg); font-weight: 600; white-space: nowrap; }
+  td.empty { color: #bbb; }
+  .tag { display:inline-block; padding: .05rem .45rem; border-radius: 10px; font-size:.8rem; font-weight:600; }
+  .tag.drug { background:#e3f0e3; color:#256a25; }
+  .tag.possibleDrug { background:#fdf0d9; color:#9a6a17; }
+  .surrounding { font-family: ui-monospace, monospace; font-size: 12px; color: var(--muted); }
+  .surrounding b { color: var(--fg); background:#fff3bf; padding:0 1px; }
+  details { margin-top: 1rem; }
+  summary { cursor: pointer; font-weight:600; }
+  pre { background: var(--code); padding: 1rem; border-radius: 6px; overflow:auto; font-size: 13px; }
+  .none { color: var(--muted); font-style: italic; }
+  .docs { margin-top: 3rem; padding-top: 1.5rem; border-top: 2px solid var(--line); color:#333; }
+  .docs h2 { font-size: 1.2rem; }
+  .docs code { background: var(--code); padding: .1rem .3rem; border-radius: 4px; font-size: .9em; }
+  .docs a { color: var(--accent); }
+  footer { margin-top: 2.5rem; color: var(--muted); font-size:.85rem; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>MERKI</h1>
+  <p class="sub">Medication Extraction and Reconciliation Knowledge Instrument — extract structured medication
+    information (drug, dose, route, frequency, prn, dates) from free-text clinical notes. Runs entirely in your
+    browser; nothing is sent to a server.</p>
+
+  <label for="input">Clinical text</label>
+  <textarea id="input" spellcheck="false"></textarea>
+  <div class="controls">
+    <button id="parse" class="primary" disabled>Parse</button>
+    <button id="example" type="button">Load example</button>
+    <button id="clear" type="button">Clear</button>
+    <span id="status" class="status">Loading parser…</span>
+  </div>
+
+  <section id="results"></section>
+
+  <div class="docs" id="docs">
+    <h2>What it does</h2>
+    <p>MERKI parses narrative clinical text and pulls out medications. Each result is either a <b>drug</b> (the name
+      was found in the bundled RxNorm-derived lexicon) or a <b>possible drug</b> (the name wasn’t in the lexicon —
+      e.g. a misspelling — but it was flanked by enough evidence, like a dose and instructions, a “prn”, or a
+      “treated with …” phrase, to be worth surfacing). The parser also tracks <b>context</b> clues (“Discharge
+      medications:”, “Allergies:”, “Home meds:”, “on hold”, …): a context applies to every medication after it until
+      the next context clue.</p>
+
+    <h2>How to read the results</h2>
+    <p>For each medication the table shows the drug name and any dose, route, frequency, prn, and date it found, plus
+      the inferred <code>when</code> (before admission / during stay / after discharge) and the surrounding text with
+      the match highlighted. The raw token objects are under “Show JSON”.</p>
+
+    <h2>Background</h2>
+    <p>MERKI was built at Columbia University’s Department of Biomedical Informatics. The original paper —
+      <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2655993/">Extracting Structured Medication Event
+      Information from Discharge Summaries</a> (Gold, Elhadad, Zhu, Cimino, Hripcsak) — received an AMIA
+      Distinguished Paper award. This page is a dependency-light TypeScript port of the original Perl parser, so the
+      demo can run as a static page; the original Perl-CGI demo is long gone. Source and the parser library are in
+      the <a href="https://github.com/sigfried/merki">repository</a> (GPL-3.0).</p>
+  </div>
+
+  <footer>
+    Parser runs client-side. The drug lexicon (<code>druglist.tsv</code>, ~17k names) is fetched once on load.
+  </footer>
+</div>
+
+<script type="module">
+  const EXAMPLE =
+`Discharge medications: Procardia XL 60 mg p.o. q.d., ferrous sulfate 300 mg p.o. b.i.d., Cipro 250 mg p.o. q12h.
+Allergies: penicillin, sulfa, codeine.
+Home meds: aspirin 81 mg po daily, atorvastatin 40 mg po qhs.
+Pain controlled with oxycodone 5 mg p.o. q4h prn and tylenol 650 mg p.o. q6h prn pain.`;
+
+  const $ = (id) => document.getElementById(id);
+  const input = $('input'), status = $('status'), results = $('results');
+  const parseBtn = $('parse');
+
+  // Fields shown as table columns, in order.
+  const COLS = ['drugName', 'dose', 'route', 'freq', 'prn', 'date', 'when', 'context'];
+
+  function esc(s) {
+    return String(s).replace(/[&<>]/g, (c) => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;' }[c]));
+  }
+
+  function surrounding(d) {
+    // precedingText[ text ]followingText, with the match bolded
+    return `${esc(d.precedingText ?? '')}<b>[${esc(d.text ?? '')}]</b>${esc(d.followingText ?? '')}`;
+  }
+
+  function render(drugs) {
+    if (!drugs.length) {
+      results.innerHTML = '<p class="none">No medications found.</p>';
+      return;
+    }
+    const head = `<tr><th>type</th>${COLS.map((c) => `<th>${c}</th>`).join('')}<th>surrounding text</th></tr>`;
+    const rows = drugs.map((d) => {
+      const cells = COLS.map((c) => {
+        const v = d[c];
+        return v === undefined || v === '' ? '<td class="empty">·</td>' : `<td>${esc(v)}</td>`;
+      }).join('');
+      return `<tr><td><span class="tag ${d.type}">${d.type}</span></td>${cells}` +
+             `<td class="surrounding">${surrounding(d)}</td></tr>`;
+    }).join('');
+    results.innerHTML =
+      `<table>${head}${rows}</table>` +
+      `<details><summary>Show JSON</summary><pre>${esc(JSON.stringify(drugs, null, 2))}</pre></details>`;
+  }
+
+  let parser = null;
+  const TOP = ['drug', 'possibleDrug', 'context'];
+  const SECOND = ['dose', 'route', 'freq', 'prn', 'date'];
+
+  function run() {
+    if (!parser) return;
+    try {
+      const drugs = parser.twoLevelParse(input.value, TOP, SECOND);
+      render(drugs);
+      status.textContent = `${drugs.length} medication${drugs.length === 1 ? '' : 's'} found`;
+      status.className = 'status';
+    } catch (err) {
+      status.textContent = 'Parse error: ' + err.message;
+      status.className = 'status error';
+    }
+  }
+
+  $('example').addEventListener('click', () => { input.value = EXAMPLE; run(); });
+  $('clear').addEventListener('click', () => { input.value = ''; results.innerHTML = ''; status.textContent = ''; status.className = 'status'; });
+  parseBtn.addEventListener('click', run);
+  input.value = EXAMPLE;
+
+  // Load the parser + lexicon. Uses ESM + a JSON import attribute internally,
+  // which needs a current browser (Chrome/Edge/Firefox/Safari from ~2024 on).
+  (async () => {
+    try {
+      const [{ Parser }, tsv] = await Promise.all([
+        import('./lib/index.js'),
+        fetch('./druglist.tsv').then((r) => {
+          if (!r.ok) throw new Error(`could not load druglist.tsv (${r.status})`);
+          return r.text();
+        }),
+      ]);
+      parser = new Parser(tsv);
+      parseBtn.disabled = false;
+      status.textContent = 'Ready — edit the text and press Parse.';
+      run(); // parse the example immediately
+    } catch (err) {
+      status.textContent = 'Failed to load the parser. This demo needs a current browser. (' + err.message + ')';
+      status.className = 'status error';
+    }
+  })();
+</script>
+</body>
+</html>

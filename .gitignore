@@ -1,0 +1,4 @@
+# Built demo artifacts — produced by `npm run build:demo` (port/) and by the
+# Pages GitHub Action.  Only docs/index.html is source; the rest is generated.
+docs/lib/
+docs/druglist.tsv

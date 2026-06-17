@@ -1,0 +1,51 @@
+# Build the MERKI parser and deploy the static demo (docs/) to GitHub Pages.
+#
+# Pages source must be set to "GitHub Actions" (Settings -> Pages -> Build and
+# deployment -> Source -> GitHub Actions).  The demo's built files (docs/lib,
+# docs/druglist.tsv) are produced here, not committed; only docs/index.html is
+# in the repo.
+name: Deploy demo to Pages
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow one concurrent deployment; let an in-progress run finish.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: port
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: port/package-lock.json
+      - run: npm ci
+      - run: npm run build:demo
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
